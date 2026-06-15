@@ -18,6 +18,7 @@ function draw() {
 
 class Shape {
   constructor(l, x = 0, y = 0, rot = 0) {
+    this.l = l;
     this.kiteLength = l;
     this.h = l / (1 / tan(36) + 1 / tan(72));
     this.x = x;
@@ -53,49 +54,25 @@ class Shape {
 class Dart extends Shape {
   constructor(kiteLength = 40, x = 0, y = 0, rot = 0) {
     super(kiteLength, x, y, rot);
-    this.x = x;
-    this.y = y;
-    this.rot = rot;
 
-    this.rot = this.rot + 180;
-    this.l = this.kiteLength / PHI;
-    this.x1 = this.l + this.x;
-    this.y1 = this.y;
-    this.x2 = this.x - this.h / tan(72);
-    this.y2 = this.y - this.h;
-    this.x3 = this.x;
-    this.y3 = this.y;
-    this.x4 = this.x2;
-    this.y4 = this.y + this.h;
+    this.rot = rot + 180;
+    this.l = kiteLength / PHI;
+    this.p1 = createVector(this.l + x, y);
+    this.p2 = createVector(x - this.h / tan(72), y - this.h);
+    this.p3 = createVector(x, y);
+    this.p4 = createVector(this.p2.x, y + this.h);
     this.a1 = this.l / PHI;
     this.a2 = this.l - this.a1;
     this.arc1 = 36;
     this.arc2 = 105;
   }
   show() {
+    const { drawArcs, p1, p2, p3, p4, l, rot, a1, a2, arc1, arc2 } = this;
     push();
     stroke("black");
     strokeWeight(2);
-    quad(
-      this.x1,
-      this.y1,
-      this.x2,
-      this.y2,
-      this.x3,
-      this.y3,
-      this.x4,
-      this.y4,
-    );
-    this.drawArcs(
-      this.x1,
-      this.y1,
-      -this.l,
-      this.a1,
-      this.a2,
-      this.rot,
-      this.arc1,
-      this.arc2,
-    );
+    quad(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+    drawArcs(p1.x, p1.y, -l, a1, a2, rot, arc1, arc2);
     pop();
   }
 }
@@ -103,50 +80,26 @@ class Dart extends Shape {
 class Kite extends Shape {
   constructor(kiteLength = 40, x = 0, y = 0, rot = 0) {
     super(kiteLength, x, y, rot);
-    this.l = this.kiteLength;
-    this.x = x;
-    this.y = y;
-    this.rot = rot;
 
-    this.rot = this.rot;
+    this.rot = rot;
     this.l = this.kiteLength;
-    this.x1 = this.x;
-    this.y1 = this.y;
-    this.x2 = this.h / tan(36) + this.x;
-    this.y2 = this.y + this.h;
-    this.x3 = this.l + this.x;
-    this.y3 = this.y;
-    this.x4 = this.x2;
-    this.y4 = this.y - this.h;
+
+    this.p1 = createVector(x, y);
+    this.p2 = createVector(this.h / tan(36) + x, y + this.h);
+    this.p3 = createVector(this.l + x, y);
+    this.p4 = createVector(this.p2.x, y - this.h);
     this.a1 = this.l / PHI;
     this.a2 = this.l - this.a1;
     this.arc1 = 36;
     this.arc2 = 72;
   }
   show() {
+    const { drawArcs, p1, p2, p3, p4, l, rot, a1, a2, arc1, arc2 } = this;
     push();
     stroke("black");
     strokeWeight(2);
-    quad(
-      this.x1,
-      this.y1,
-      this.x2,
-      this.y2,
-      this.x3,
-      this.y3,
-      this.x4,
-      this.y4,
-    );
-    this.drawArcs(
-      this.x1,
-      this.y1,
-      -this.l,
-      this.a1,
-      this.a2,
-      this.rot,
-      this.arc1,
-      this.arc2,
-    );
+    quad(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+    drawArcs(p1.x, p1.y, l, a1, a2, rot, arc1, arc2);
     pop();
   }
 }
