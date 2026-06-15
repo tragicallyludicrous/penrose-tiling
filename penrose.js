@@ -5,15 +5,15 @@ let PHI = (1 + Math.sqrt(5)) / 2; // The Golden Ratio constant
 function setup() {
   createCanvas(400, 400);
   angleMode(DEGREES);
-  dart = new Dart(100, 0, 0, 0);
-  kite = new Kite(100, 0, 0, 0);
+  dart = new Dart(100, 50, 0, 0);
+  kite = new Kite(100, -100, 0, 0);
 }
 
 function draw() {
   background(210);
   translate(width / 2, height / 2);
-  kite.show();
   dart.show();
+  kite.show();
 }
 
 class Shape {
@@ -25,13 +25,13 @@ class Shape {
     this.y = y;
     this.rot = rot;
   }
-  drawArcs(x, y, l, a1, a2, rot, arc1, arc2) {
+  drawArcs(x1, y1, x2, y2, a1, a2, arc1, arc2, rot) {
     // Green Arc
     push();
     noFill();
     stroke("green");
     strokeWeight(2);
-    arc(x, y, a1 * 2, a1 * 2, (rot - arc1) % 360, (rot + arc1) % 360);
+    arc(x1, y1, a1 * 2, a1 * 2, (360 - arc1 + rot) % 360, arc1 + (rot % 360));
     pop();
 
     // Red Arc
@@ -40,13 +40,30 @@ class Shape {
     stroke("red");
     strokeWeight(2);
     arc(
-      x + l,
-      y,
+      x2,
+      y2,
       a2 * 2,
       a2 * 2,
-      (rot + 180 - arc2) % 360,
-      (rot + 180 + arc2) % 360,
+      (180 - arc2 + rot) % 360,
+      (180 + arc2 + rot) % 360,
     );
+    pop();
+  }
+
+  rotate(degrees) {
+    for (let v of ["p1", "p2", "p3", "p4"]) {
+      this[v].rotate(degrees);
+    }
+    this.rot += degrees;
+  }
+
+  show() {
+    const { drawArcs, p1, p2, p3, p4, l, a1, a2, arc1, arc2, rot } = this;
+    push();
+    stroke("black");
+    strokeWeight(2);
+    quad(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+    drawArcs(p1.x, p1.y, p3.x, p3.y, a1, a2, arc1, arc2, rot);
     pop();
   }
 }
@@ -56,24 +73,17 @@ class Dart extends Shape {
     super(kiteLength, x, y, rot);
 
     this.rot = rot + 180;
-    this.l = kiteLength / PHI;
-    this.p1 = createVector(this.l + x, y);
+    this.l = -kiteLength / PHI;
+
+    this.p1 = createVector(x - this.l, y);
     this.p2 = createVector(x - this.h / tan(72), y - this.h);
     this.p3 = createVector(x, y);
     this.p4 = createVector(this.p2.x, y + this.h);
+
     this.a1 = this.l / PHI;
     this.a2 = this.l - this.a1;
     this.arc1 = 36;
     this.arc2 = 105;
-  }
-  show() {
-    const { drawArcs, p1, p2, p3, p4, l, rot, a1, a2, arc1, arc2 } = this;
-    push();
-    stroke("black");
-    strokeWeight(2);
-    quad(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
-    drawArcs(p1.x, p1.y, -l, a1, a2, rot, arc1, arc2);
-    pop();
   }
 }
 
@@ -88,18 +98,10 @@ class Kite extends Shape {
     this.p2 = createVector(this.h / tan(36) + x, y + this.h);
     this.p3 = createVector(this.l + x, y);
     this.p4 = createVector(this.p2.x, y - this.h);
+
     this.a1 = this.l / PHI;
     this.a2 = this.l - this.a1;
     this.arc1 = 36;
     this.arc2 = 72;
-  }
-  show() {
-    const { drawArcs, p1, p2, p3, p4, l, rot, a1, a2, arc1, arc2 } = this;
-    push();
-    stroke("black");
-    strokeWeight(2);
-    quad(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
-    drawArcs(p1.x, p1.y, l, a1, a2, rot, arc1, arc2);
-    pop();
   }
 }
