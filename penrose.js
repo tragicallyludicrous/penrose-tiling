@@ -6,12 +6,18 @@ function setup() {
   createCanvas(400, 400);
   angleMode(DEGREES);
   dart = new Dart(100, 50, 0, 0);
+  dart.rotate(30);
   kite = new Kite(100, -100, 0, 0);
+  kite.rotate(30);
 }
 
 function draw() {
   background(210);
   translate(width / 2, height / 2);
+  let center = dart.getCenter();
+  let dx = mouseX - width / 2 - center.x;
+  let dy = mouseY - height / 2 - center.y;
+  dart.move(dx, dy);
   dart.show();
   kite.show();
 }
@@ -55,6 +61,19 @@ class Shape {
       this[v].rotate(degrees);
     }
     this.rot += degrees;
+  }
+
+  getCenter() {
+    let cx = (this.p1.x + this.p2.x + this.p3.x + this.p4.x) / 4;
+    let cy = (this.p1.y + this.p2.y + this.p3.y + this.p4.y) / 4;
+    return createVector(cx, cy);
+  }
+
+  move(dx, dy) {
+    this.p1.add(dx, dy);
+    this.p2.add(dx, dy);
+    this.p3.add(dx, dy);
+    this.p4.add(dx, dy);
   }
 
   show() {
